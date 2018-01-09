@@ -10,10 +10,10 @@ public class PlayerInput : MonoBehaviour {
        
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            foreach (Laser l in laser)
+            foreach (Laser las in laser)
             {
                 //Vector3 pos = transform.position + (transform.forward * l.Distance());
-               l.FireLaser();
+               las.FireLaser();
             }
             
         }

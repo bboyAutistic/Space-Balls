@@ -15,6 +15,8 @@ public class Laser : MonoBehaviour {
     [SerializeField]
     float fireDelay = 0.8f;
     bool canFire;
+    
+
 
     void Awake()
     {
@@ -41,9 +43,8 @@ public class Laser : MonoBehaviour {
         {
             Debug.Log("We hit: " + hit.transform.name);
 
-            Explozions tempExploz=hit.transform.GetComponent<Explozions>();
-            if(tempExploz !=null)
-                   tempExploz.IvebeenHit(hit.point);
+            SpawnExplosion(hit.point, hit.transform);
+
             return hit.point;
         }
         
@@ -52,6 +53,20 @@ public class Laser : MonoBehaviour {
 
 
     }
+
+    void SpawnExplosion(Vector3 hitPosition,Transform target)
+    {
+        Explozions tempExploz = target.transform.GetComponent<Explozions>();
+        if (tempExploz != null)
+        {
+            tempExploz.IvebeenHit(hitPosition);
+            tempExploz.AddForceAfterHit(hitPosition, transform);
+        }
+            
+    }
+
+
+
     //poziva overloudan samo kaj ovaj radi za Playera
     public void FireLaser()
     {
@@ -60,10 +75,16 @@ public class Laser : MonoBehaviour {
     }
 
     //overloudan tako da radi i za Enemy
-    public void FireLaser(Vector3 targetPostion)
+    public void FireLaser(Vector3 targetPostion,Transform target=null)
     {
         if (canFire)
         {
+            if(target != null)
+            {
+                SpawnExplosion(targetPostion, target);
+                
+            }
+                
             lr.SetPosition(0, transform.position);
             lr.SetPosition(1, targetPostion);
             lr.enabled = true;

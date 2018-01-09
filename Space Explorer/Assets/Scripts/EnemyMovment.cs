@@ -14,6 +14,7 @@ public class EnemyMovment : MonoBehaviour {
 
     void Update()
     {
+        if (!FindTarget()) return;
         Turn();
         Move();
         
@@ -50,5 +51,13 @@ public class EnemyMovment : MonoBehaviour {
             //Debug.Log("brzooo");
             transform.position += transform.forward * Time.deltaTime * movementSpeed * 1.2f;
         }
+    }
+
+    bool FindTarget()
+    {
+        if (target == null)
+            target = GameObject.FindGameObjectWithTag("Player").transform;
+        if (target == null) return false;
+        return true;
     }
 }

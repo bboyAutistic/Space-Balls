@@ -9,9 +9,13 @@ public class PlayerHealth : MonoBehaviour {
 	public float shieldRegenTime = 2f;
 	public float shieldRegenAmount = 10f;
 
+    GameObject shield;
+
 	float currentHealth;
 	float currentShield;
 	bool isDead = false;
+
+    
 
 	HealthUI healthUI;
 
@@ -19,6 +23,8 @@ public class PlayerHealth : MonoBehaviour {
 
 	void Awake(){
 		healthUI = GameObject.Find ("Health&Shield").GetComponent<HealthUI> ();
+        shield = GameObject.Find("Shield");
+
 	}
 
 	void Start () {
@@ -26,6 +32,7 @@ public class PlayerHealth : MonoBehaviour {
 		currentHealth = maxHealth;
 		currentShield = maxShield;
 
+        shield.SetActive(false);
 		InvokeRepeating ("RegenerateShield", shieldRegenTime, shieldRegenTime);
 	}
 
@@ -49,11 +56,16 @@ public class PlayerHealth : MonoBehaviour {
 		if (currentShield > 0) {
 			currentShield -= dmg;
 
-			if (currentShield < 0) {
+            shield.SetActive(true);
+            Invoke("DeactivateShield", 1f);
+
+
+            if (currentShield < 0) {
 				currentShield = 0;
 				dmg -= shieldBeforeHit;
 				currentHealth -= dmg;
 				healthUI.UpdateHealthBar (currentHealth / maxHealth);
+
 			}
 
 			healthUI.UpdateShieldBar (currentShield / maxShield);
@@ -77,4 +89,12 @@ public class PlayerHealth : MonoBehaviour {
 		Debug.Log("WE ARE AT 0 HEALTH");
 
 	}
+
+    void DeactivateShield()
+    {
+        shield.SetActive(false);
+    }
+
+
+
 }

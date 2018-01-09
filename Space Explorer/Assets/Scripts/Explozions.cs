@@ -24,6 +24,7 @@ public class Explozions : MonoBehaviour {
 		GetComponent<PlayerHealth> ().TakeDamage (30);
     }
 
+   
     public void AddForceAfterHit(Vector3 hitPosition,Transform hitSource)
     {
         if (rb == null) return;

@@ -15,18 +15,13 @@ public class Explozions : MonoBehaviour {
     [SerializeField]
     float particleDuration = 5f;
 
-    [SerializeField]
-    Shield shield;
-
     public void IvebeenHit(Vector3 pos)
     {
         GameObject go = Instantiate(explosion, pos, Quaternion.identity, transform) as GameObject;
         Destroy(go, (particleDuration + 1f));
 
-        if (shield == null) return;
-
-        shield.TakeDamage();
-
+		if(GetComponent<PlayerHealth>() == null) return;
+		GetComponent<PlayerHealth> ().TakeDamage (30);
     }
 
     public void AddForceAfterHit(Vector3 hitPosition,Transform hitSource)

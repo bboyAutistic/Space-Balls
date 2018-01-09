@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
 
-	public float moveSpeed = 10f;
+	public float moveSpeed = 7f;
 	public float turnSpeed = 5f;
+	public float pitchSpeedLimit = 3f;
+	public float jawSpeedLimit = 3f;
+	public float rollSpeedLimit = 3f;
 
 	Rigidbody rb;
 
@@ -22,10 +25,13 @@ public class PlayerMovement : MonoBehaviour {
 	void FixedUpdate () {
 
 		//kretanje broda
+		//rikverc je 25% brzine
 		float fwd = Input.GetAxis ("Vertical");
-		//rade oba 2 nacina, preko rigidbodya se zbog sile lijepi za asteroide, al ima prirodnije kretanje (ubrzavanje, usporavanje, drift)
-		//translate radi identicno ko na tvojoj skripti
-		rb.AddForce (fwd * transform.forward * moveSpeed, ForceMode.Impulse);
+		if (fwd >= 0) {
+			rb.AddForce (fwd * transform.forward * moveSpeed, ForceMode.Impulse);
+		} else {
+			rb.AddForce (fwd * transform.forward * moveSpeed * 0.25f, ForceMode.Impulse);
+		}
 		//transform.Translate(0, 0, fwd * moveSpeed * 5 * Time.deltaTime);
 
 
@@ -38,9 +44,9 @@ public class PlayerMovement : MonoBehaviour {
 		bankAngle = z * turnSpeed;
 
 		//limitacija brzine rotiranja, bez limita vrti se kolko brzo pomices mis, s limitima ima odredjenu maksmimalnu brzinu rotacije
-		verticalRotation = Mathf.Clamp (verticalRotation, -2f, 2f);
-		horizontalRotation = Mathf.Clamp (horizontalRotation, -2f, 2f);
-		bankAngle = Mathf.Clamp (bankAngle, -5f, 5f);
+		verticalRotation = Mathf.Clamp (verticalRotation, -pitchSpeedLimit, pitchSpeedLimit);
+		horizontalRotation = Mathf.Clamp (horizontalRotation, -jawSpeedLimit, jawSpeedLimit);
+		bankAngle = Mathf.Clamp (bankAngle, -rollSpeedLimit, rollSpeedLimit);
 
 		transform.Rotate (-verticalRotation, 0f, 0f, Space.Self);
 		transform.Rotate (0f, horizontalRotation, 0f, Space.Self);

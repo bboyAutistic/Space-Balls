@@ -7,7 +7,7 @@ public class CameraBehaviour : MonoBehaviour {
 	public GameObject target;
     
 
-    public float distanceLerp = 12f;
+    public float distanceLerp = 15f;
 
 
     Vector3 offset;
@@ -33,6 +33,16 @@ public class CameraBehaviour : MonoBehaviour {
 		Vector3 tarPos = target.transform.position + (transform.rotation * offset);
 		Vector3 curPos = Vector3.Lerp(transform.position, tarPos, distanceLerp * Time.deltaTime);
 		transform.position = curPos;
+
+	}
+
+	void Update(){
+
+		//cursor lock
+		if (Input.GetMouseButton (0))
+			Cursor.lockState = CursorLockMode.Locked;
+		if (Input.GetKeyDown (KeyCode.Escape))
+			Cursor.lockState = CursorLockMode.None;
 
 	}
 }

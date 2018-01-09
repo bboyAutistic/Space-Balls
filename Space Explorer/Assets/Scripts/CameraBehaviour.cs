@@ -5,8 +5,12 @@ using UnityEngine;
 public class CameraBehaviour : MonoBehaviour {
 
 	public GameObject target;
+    
 
-	Vector3 offset;
+    public float distanceLerp = 12f;
+
+
+    Vector3 offset;
 
 	void Start () {
 		
@@ -27,7 +31,7 @@ public class CameraBehaviour : MonoBehaviour {
 		//ovaj dio radi super
 		transform.rotation = Quaternion.Lerp(transform.rotation, target.transform.rotation, 15f * Time.deltaTime);
 		Vector3 tarPos = target.transform.position + (transform.rotation * offset);
-		Vector3 curPos = Vector3.Lerp(transform.position, tarPos, 10f * Time.deltaTime);
+		Vector3 curPos = Vector3.Lerp(transform.position, tarPos, distanceLerp * Time.deltaTime);
 		transform.position = curPos;
 
 	}

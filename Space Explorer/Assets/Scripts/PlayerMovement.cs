@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour {
 
 	float verticalRotation;
 	float horizontalRotation;
+	float bankAngle;
 
 	void Start () {
 		
@@ -31,14 +32,18 @@ public class PlayerMovement : MonoBehaviour {
 		//rotacija broda
 		float x = Input.GetAxis ("Mouse X");
 		float y = Input.GetAxis ("Mouse Y");
+		float z = Input.GetAxis ("Horizontal");
 		horizontalRotation = x * turnSpeed;
 		verticalRotation = y * turnSpeed;
+		bankAngle = z * turnSpeed;
 
 		//limitacija brzine rotiranja, bez limita vrti se kolko brzo pomices mis, s limitima ima odredjenu maksmimalnu brzinu rotacije
-		verticalRotation = Mathf.Clamp (verticalRotation, -5f, 5f);
-		horizontalRotation = Mathf.Clamp (horizontalRotation, -5f, 5f);
+		verticalRotation = Mathf.Clamp (verticalRotation, -2f, 2f);
+		horizontalRotation = Mathf.Clamp (horizontalRotation, -2f, 2f);
+		bankAngle = Mathf.Clamp (bankAngle, -5f, 5f);
 
 		transform.Rotate (-verticalRotation, 0f, 0f, Space.Self);
 		transform.Rotate (0f, horizontalRotation, 0f, Space.Self);
+		transform.Rotate (0f, 0f, -bankAngle, Space.Self);
 	}
 }

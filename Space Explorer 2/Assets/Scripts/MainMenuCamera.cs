@@ -19,7 +19,7 @@ public class MainMenuCamera : MonoBehaviour {
 
     void Update()
     {
-        target.transform.Translate(0f, 0f, 0.5f);
+        target.transform.Translate(0f, 0f, 0.2f);
 
         point = target.transform.position;
         transform.LookAt(point);

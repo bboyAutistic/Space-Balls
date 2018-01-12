@@ -26,7 +26,8 @@ public class CameraBehaviour : MonoBehaviour {
 		transform.position = curPos;
 
 	}
-
+    //cursor lock
+    /*
 	void Update(){
 
 		//cursor lock
@@ -36,4 +37,5 @@ public class CameraBehaviour : MonoBehaviour {
 			Cursor.lockState = CursorLockMode.None;
 
 	}
+    */
 }

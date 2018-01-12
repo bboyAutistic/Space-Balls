@@ -9,8 +9,16 @@ public class PlayerMovement : MonoBehaviour {
 	public float pitchSpeedLimit = 3f;
 	public float jawSpeedLimit = 3f;
 	public float rollSpeedLimit = 3f;
+	public float boostPercentage = 100f;
+	public float boostTime = 10f;
 
 	Rigidbody rb;
+
+	bool boost;
+	float originalSpeed;
+	float boostSpeed;
+	float boostTimer;
+	BoostUI boostUI;
 
 	float verticalRotation;
 	float horizontalRotation;
@@ -19,6 +27,27 @@ public class PlayerMovement : MonoBehaviour {
 	void Start () {
 		
 		rb = GetComponent<Rigidbody> ();
+		boostUI = GameObject.Find ("BoostUI").GetComponent<BoostUI> ();
+		originalSpeed = moveSpeed;
+		boostSpeed = moveSpeed * (1 + (boostPercentage / 100));
+		boostTimer = boostTime;
+	}
+
+	void Update(){
+
+		boost = Input.GetKey(KeyCode.Space);
+		if (boost && boostTimer > 0) {
+			
+			moveSpeed = boostSpeed;
+			boostTimer -= Time.deltaTime;
+
+		} else {
+			
+			moveSpeed = originalSpeed;
+			if (boostTimer <= boostTime && !boost)
+				boostTimer += Time.deltaTime/2;
+		}
+		boostUI.updateBoostBar (boostTimer / boostTime);
 
 	}
 

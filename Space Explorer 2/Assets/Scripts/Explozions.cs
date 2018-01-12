@@ -19,9 +19,6 @@ public class Explozions : MonoBehaviour {
     {
         GameObject go = Instantiate(explosion, pos, Quaternion.identity, transform) as GameObject;
         Destroy(go, (particleDuration + 1f));
-
-		if(GetComponent<PlayerHealth>() == null) return;
-		GetComponent<PlayerHealth> ().TakeDamage (30);
     }
 
    

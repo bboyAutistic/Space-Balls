@@ -6,17 +6,14 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour {
 
-    [SerializeField]
-    float laserOffTime = 0.05f;
-    [SerializeField]
-    float maxDistance = 300f;
-    LineRenderer lr;
+    public float laserOffTime = 0.05f;
+    public float maxDistance = 300f;
+	public float fireDelay = 0.8f;
+	public float damage = 30f;
 
-    [SerializeField]
-    float fireDelay = 0.8f;
+	LineRenderer lr;
     bool canFire;
-    
-
+	float timer;
 
     void Awake()
     {
@@ -27,30 +24,44 @@ public class Laser : MonoBehaviour {
     {
         lr.enabled = false;
         canFire=true;
+		timer = fireDelay;
     }
-    /*
+    
     void Update()
     {
         //na ekranu se pojavi ray koji je vidljiv cijelo vrijeme
-        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * maxDistance,Color.blue);
+        //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * maxDistance,Color.blue);
+		timer+=Time.deltaTime;
+		if (Input.GetKey(KeyCode.Mouse0) && gameObject.name == "Laser" && timer > fireDelay) {
+			FireLaser ();
+		}
+
     }
-    */
+
     private Vector3 CastRay()
     {
+		timer = 0;
         RaycastHit hit;
-        Vector3 fwd = transform.TransformDirection(Vector3.forward) * maxDistance;
-        if(Physics.Raycast(transform.position,fwd,out hit))
-        {
-            Debug.Log("We hit: " + hit.transform.name);
+		if (Physics.Raycast (transform.position, transform.forward, out hit, maxDistance)) {
 
-            SpawnExplosion(hit.point, hit.transform);
+			if (hit.collider.gameObject.CompareTag ("Asteroid")) {
+				SpawnExplosion(hit.point, hit.transform);
+			}
 
-            return hit.point;
-        }
-        
-        Debug.Log("We missed ");
-        return transform.position + (transform.forward * maxDistance);
+			if (hit.collider.gameObject.CompareTag ("Player")) {
+				PlayerHealth player = hit.collider.gameObject.GetComponent<PlayerHealth> ();
+				player.TakeDamage (damage);
+				if (player.getShield() <= 0) {
+					SpawnExplosion(hit.point, hit.transform);
+				}
+			}
 
+			return hit.point;
+
+		}
+
+		Debug.Log("We missed ");
+		return transform.position + (transform.forward * maxDistance);
 
     }
 
@@ -81,8 +92,11 @@ public class Laser : MonoBehaviour {
         {
             if(target != null)
             {
-                SpawnExplosion(targetPostion, target);
-                
+				PlayerHealth playerShotByAI = target.gameObject.GetComponent<PlayerHealth> ();
+				playerShotByAI.TakeDamage (damage);
+				if (playerShotByAI.getShield () <= 0) {
+					SpawnExplosion(targetPostion, target);
+				}
             }
                 
             lr.SetPosition(0, transform.position);

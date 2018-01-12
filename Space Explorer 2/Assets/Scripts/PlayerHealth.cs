@@ -8,15 +8,13 @@ public class PlayerHealth : MonoBehaviour {
 	public float maxShield = 100f;
 	public float shieldRegenTime = 2f;
 	public float shieldRegenAmount = 10f;
+	public GameObject deathExplosion;
 
     GameObject shield;
 
 	float currentHealth;
 	float currentShield;
 	bool isDead = false;
-
-    
-
 	HealthUI healthUI;
 
 	float shieldBeforeHit;
@@ -50,6 +48,9 @@ public class PlayerHealth : MonoBehaviour {
 	}
 
 	public void TakeDamage(float dmg){
+
+		CancelInvoke ("RegenerateShield");
+		InvokeRepeating ("RegenerateShield", shieldRegenTime, shieldRegenTime);
 
 		shieldBeforeHit = currentShield;
 
@@ -86,7 +87,11 @@ public class PlayerHealth : MonoBehaviour {
 	void Death(){
 		
 		isDead = true;
-		Debug.Log("WE ARE AT 0 HEALTH");
+		CancelInvoke ();
+		Instantiate (deathExplosion, transform.position, transform.rotation);
+		this.gameObject.SetActive (false);
+
+		//Debug.Log("WE ARE AT 0 HEALTH");
 
 	}
 
@@ -95,6 +100,8 @@ public class PlayerHealth : MonoBehaviour {
         shield.SetActive(false);
     }
 
-
+	public float getShield(){
+		return currentShield;
+	}
 
 }

@@ -10,7 +10,7 @@ public class PlayerHealth : MonoBehaviour {
 	public float shieldRegenAmount = 10f;
 	public GameObject deathExplosion;
 
-    GameObject shield;
+	GameObject shield;
 
 	float currentHealth;
 	float currentShield;
@@ -22,11 +22,11 @@ public class PlayerHealth : MonoBehaviour {
 	void Awake(){
 		healthUI = GameObject.Find ("Health&Shield").GetComponent<HealthUI> ();
         shield = GameObject.Find("Shield");
-
+		//izbacuje neki error ali radi
+		//shield = transform.Find("Shield").gameObject;
 	}
 
 	void Start () {
-		
 		currentHealth = maxHealth;
 		currentShield = maxShield;
 

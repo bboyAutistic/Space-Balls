@@ -61,8 +61,6 @@ public class PlayerMovement : MonoBehaviour {
 		} else {
 			rb.AddForce (fwd * transform.forward * moveSpeed * 0.25f, ForceMode.Impulse);
 		}
-		//transform.Translate(0, 0, fwd * moveSpeed * 5 * Time.deltaTime);
-
 
 		//rotacija broda
 		float x = Input.GetAxis ("Mouse X");

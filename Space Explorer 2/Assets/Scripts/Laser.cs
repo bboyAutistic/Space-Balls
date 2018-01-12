@@ -13,7 +13,6 @@ public class Laser : MonoBehaviour {
 
 	LineRenderer lr;
     bool canFire;
-	float timer;
 
     void Awake()
     {
@@ -24,23 +23,20 @@ public class Laser : MonoBehaviour {
     {
         lr.enabled = false;
         canFire=true;
-		timer = fireDelay;
     }
     
     void Update()
     {
         //na ekranu se pojavi ray koji je vidljiv cijelo vrijeme
         //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * maxDistance,Color.blue);
-		timer+=Time.deltaTime;
-		if (Input.GetKey(KeyCode.Mouse0) && gameObject.name == "Laser" && timer > fireDelay) {
-			FireLaser ();
-		}
-
+		//timer+=Time.deltaTime;
+		//if (Input.GetKey(KeyCode.Mouse0) && gameObject.name == "Laser" && timer > fireDelay) {
+		//	FireLaser ();
+		//}
     }
 
     private Vector3 CastRay()
     {
-		timer = 0;
         RaycastHit hit;
 		if (Physics.Raycast (transform.position, transform.forward, out hit, maxDistance)) {
 
@@ -49,11 +45,17 @@ public class Laser : MonoBehaviour {
 			}
 
 			if (hit.collider.gameObject.CompareTag ("Player")) {
+				//PlayerHealth player = hit.collider.gameObject.GetComponent<PlayerHealth> ();
 				PlayerHealth player = hit.collider.gameObject.GetComponent<PlayerHealth> ();
 				player.TakeDamage (damage);
 				if (player.getShield() <= 0) {
 					SpawnExplosion(hit.point, hit.transform);
 				}
+			}
+
+			if (hit.collider.gameObject.CompareTag ("Enemy")) {
+				hit.collider.gameObject.GetComponent<EnemyHealth> ().TakeDamage (damage);
+				SpawnExplosion (hit.point, hit.transform);
 			}
 
 			return hit.point;
@@ -88,8 +90,6 @@ public class Laser : MonoBehaviour {
     //overloudan tako da radi i za Enemy
     public void FireLaser(Vector3 targetPostion,Transform target=null)
     {
-        if (canFire)
-        {
             if(target != null)
             {
 				PlayerHealth playerShotByAI = target.gameObject.GetComponent<PlayerHealth> ();
@@ -105,7 +105,6 @@ public class Laser : MonoBehaviour {
             canFire = false;
             Invoke("TurnOffLaser", laserOffTime);
             Invoke("CanFire", fireDelay);
-        }
     }
 
     void TurnOffLaser()
@@ -124,5 +123,9 @@ public class Laser : MonoBehaviour {
         canFire = true; 
 
     }
+
+	public bool getCanFire(){
+		return canFire;
+	}
 
 }

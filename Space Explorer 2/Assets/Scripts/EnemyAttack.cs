@@ -7,16 +7,19 @@ public class EnemyAttack : MonoBehaviour {
     [SerializeField]
     Transform target;
 
-    [SerializeField]
     Laser laser;
 
     Vector3 hitPosition;
 
+	void Awake(){
+		laser = GetComponentInChildren<Laser> ();
+	}
+
     void Update()
     {
         if (!FindTarget()) return;
-        InFront();
-        HaveLineOfSightRayCast();
+        //InFront();
+        //HaveLineOfSightRayCast();
         if(InFront() && HaveLineOfSightRayCast())
         {
             FireEnemyLaser();
@@ -63,7 +66,10 @@ public class EnemyAttack : MonoBehaviour {
     void FireEnemyLaser()
     {
         //Debug.Log("fire Laseeerrrrrrrr");
-        laser.FireLaser(hitPosition,target);
+		if (laser.getCanFire ()) {
+			laser.FireLaser(hitPosition,target);
+		}
+		//laser.FireLaser();
     }
 
     bool FindTarget()

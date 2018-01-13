@@ -22,7 +22,6 @@ public class Missile : MonoBehaviour {
 
 	void Start(){
 		timer = 0f;
-		Debug.Log ("Target " + target.name);
 	}
 
 	void Update(){

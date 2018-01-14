@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class PlayerMovement : MonoBehaviour {
+public class PlayerMovement : NetworkBehaviour {
 
 	public float moveSpeed = 7f;
 	public float turnSpeed = 5f;
@@ -25,7 +26,10 @@ public class PlayerMovement : MonoBehaviour {
 	float bankAngle;
 
 	void Start () {
-		
+
+		if (!isLocalPlayer)
+			return;
+
 		rb = GetComponent<Rigidbody> ();
 		boostUI = GameObject.Find ("BoostUI").GetComponent<BoostUI> ();
 		originalSpeed = moveSpeed;
@@ -34,6 +38,9 @@ public class PlayerMovement : MonoBehaviour {
 	}
 
 	void Update(){
+
+		if (!isLocalPlayer)
+			return;
 
 		boost = Input.GetKey(KeyCode.Space);
 		if (boost && boostTimer > 0) {
@@ -52,6 +59,9 @@ public class PlayerMovement : MonoBehaviour {
 	}
 
 	void FixedUpdate () {
+
+		if (!isLocalPlayer)
+			return;
 
 		//kretanje broda
 		//rikverc je 25% brzine

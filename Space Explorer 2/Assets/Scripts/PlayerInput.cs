@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
-public class PlayerInput : MonoBehaviour {
+public class PlayerInput : NetworkBehaviour {
 
     Laser[] laser;
 	public GameObject missile;
@@ -23,6 +24,7 @@ public class PlayerInput : MonoBehaviour {
 	Color targetLockUIColor;
 
 	void Awake(){
+
 		laser = GetComponentsInChildren<Laser> ();
 		target = null;
 		GetComponent<SphereCollider> ().radius = lockOnRange;
@@ -30,6 +32,10 @@ public class PlayerInput : MonoBehaviour {
 	}
 
 	void Update () {
+
+		if (!isLocalPlayer)
+			return;
+
 		//reload raketa i lock-on
 		missileReloadTimer += Time.deltaTime;
 		if (lockTimer > lockOnTime)
@@ -40,12 +46,20 @@ public class PlayerInput : MonoBehaviour {
 		//pucanje lasera
 		if (Input.GetKey(KeyCode.Mouse0))
         {
-            foreach (Laser las in laser)
+            /*foreach (Laser las in laser)
             {
-				if(las.getCanFire())
-					las.FireLaser();
-            }
-            
+				if (las.getCanFire ()) {
+					las.FireLaser ();
+					CmdFireLaser (las.transform.position, las.transform.forward, las.maxDistance, las.damage);
+				}
+            }*/
+
+			for (int i = 0; i < laser.Length; i++) {
+				if (laser [i].getCanFire) {
+					CmdFireLaser (laser [i].transform.position, laser [i].transform.forward, laser [i].maxDistance, laser [i].damage);
+				}
+			}
+
         }
 
 		//update lock-on UI
@@ -58,9 +72,12 @@ public class PlayerInput : MonoBehaviour {
 		}
 
 		//pucanje raketa
-		if (Input.GetKeyDown (KeyCode.Mouse1) && target != null && missileReloadTimer>missileReloadTime && lockOn){
+		if (Input.GetKeyDown (KeyCode.Mouse1) && target != null && missileReloadTimer > missileReloadTime && lockOn) {
 			missileReloadTimer = 0f;
-			Instantiate (missile, transform.position - transform.up, transform.rotation, transform);
+			CmdFireMissile ();
+		} else if (Input.GetKeyDown (KeyCode.Mouse1) && target == null && missileReloadTimer > missileReloadTime) {
+			missileReloadTimer = 0f;
+			CmdFireMissile ();
 		}
 	}
 
@@ -70,8 +87,8 @@ public class PlayerInput : MonoBehaviour {
 	}
 
 	void OnTriggerStay(Collider other){
-		//gledaj samo za Enemy
-		if (other.CompareTag ("Enemy")) {
+		//gledaj samo za Enemy i drugog Playera
+		if (other.CompareTag ("Enemy") || other.CompareTag("Player")) {
 			Vector3 direction = other.transform.position - transform.position;
 			float angle = Vector3.Angle (direction, transform.forward);
 
@@ -79,7 +96,7 @@ public class PlayerInput : MonoBehaviour {
 			if (angle <= 30f) {
 				RaycastHit hit;
 				if (Physics.Raycast (transform.position, direction, out hit, lockOnRange)) {
-					if (hit.collider.gameObject.CompareTag ("Enemy")) {
+					if (hit.collider.gameObject.CompareTag ("Enemy") || hit.collider.gameObject.CompareTag("Player")) {
 
 						//when no target, set a target
 						if (lockTarget == 0 || target == null) {
@@ -145,5 +162,47 @@ public class PlayerInput : MonoBehaviour {
 		} else {
 			targetLockUI.GetComponent<Image> ().color = targetLockUIColor;
 		}
+	}
+
+	[Command]
+	void CmdFireMissile(){
+		NetworkServer.Spawn((GameObject) Instantiate (missile, transform.position - transform.up, transform.rotation, transform));
+	}
+
+	[Command]
+	void CmdFireLaser(Vector3 origin, Vector3 direction, float maxDistance, float damage){
+		RaycastHit hit;
+		if (Physics.Raycast (origin, direction, out hit, maxDistance)) {
+
+			if (hit.collider.gameObject.CompareTag ("Asteroid")) {
+				//SpawnExplosion(hit.point, hit.transform);
+			}
+
+			if (hit.collider.gameObject.CompareTag ("Player")) {
+				//PlayerHealth player = hit.collider.gameObject.GetComponent<PlayerHealth> ();
+				PlayerHealth player = hit.collider.gameObject.GetComponent<PlayerHealth> ();
+				player.TakeDamage (damage);
+				if (player.getShield () <= 0) {
+					//SpawnExplosion(hit.point, hit.transform);
+				}
+			}
+
+			if (hit.collider.gameObject.CompareTag ("Enemy")) {
+				hit.collider.gameObject.GetComponent<EnemyHealth> ().TakeDamage (damage);
+				//SpawnExplosion (hit.point, hit.transform);
+			}
+
+			//RpcShowLaser (hit.point);
+
+		} else {
+			//RpcShowLaser (origin + (direction * maxDistance));
+		}
+	}
+
+	[ClientRpc]
+	void RpcShowLaser(Vector3 hitPoint){
+		
+				las.FireLaser(hitPoint);
+		
 	}
 }

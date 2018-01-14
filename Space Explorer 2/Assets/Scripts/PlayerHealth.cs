@@ -1,36 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class PlayerHealth : MonoBehaviour {
+public class PlayerHealth : NetworkBehaviour {
 
-	public float maxHealth = 100f;
-	public float maxShield = 100f;
-	public float shieldRegenTime = 2f;
-	public float shieldRegenAmount = 10f;
+	public const float maxHealth = 100f;
+	public const float maxShield = 100f;
+	public const float shieldRegenTime = 2f;
+	public const float shieldRegenAmount = 10f;
 	public GameObject deathExplosion;
 
+	[SerializeField]
 	GameObject shield;
 
-	float currentHealth;
-	float currentShield;
-	bool isDead = false;
+	[SyncVar(hook = "OnChangeHealth")]
+	float currentHealth = maxHealth;
+	[SyncVar(hook="OnChangeShield")]
+	float currentShield = maxShield;
+	[SerializeField]
 	HealthUI healthUI;
 
 	float shieldBeforeHit;
 
-	void Awake(){
-		healthUI = GameObject.Find ("Health&Shield").GetComponent<HealthUI> ();
-        shield = GameObject.Find("Shield");
-		//izbacuje neki error ali radi
-		//shield = transform.Find("Shield").gameObject;
-	}
-
 	void Start () {
-		currentHealth = maxHealth;
-		currentShield = maxShield;
-
-        shield.SetActive(false);
+		if (!isServer)
+			return;
 		InvokeRepeating ("RegenerateShield", shieldRegenTime, shieldRegenTime);
 	}
 
@@ -38,16 +33,19 @@ public class PlayerHealth : MonoBehaviour {
 
 		if (currentShield < maxShield) {
 			currentShield += shieldRegenAmount;
-			healthUI.UpdateShieldBar (currentShield / maxShield);
+			//healthUI.UpdateShieldBar (currentShield / maxShield);
 		}
 		if (currentShield > maxShield) {
 			currentShield = maxShield;
-			healthUI.UpdateShieldBar (currentShield / maxShield);
+			//healthUI.UpdateShieldBar (currentShield / maxShield);
 		}
 
 	}
 
 	public void TakeDamage(float dmg){
+
+		if (!isServer)
+			return;
 
 		CancelInvoke ("RegenerateShield");
 		InvokeRepeating ("RegenerateShield", shieldRegenTime, shieldRegenTime);
@@ -57,39 +55,36 @@ public class PlayerHealth : MonoBehaviour {
 		if (currentShield > 0) {
 			currentShield -= dmg;
 
-            shield.SetActive(true);
-            Invoke("DeactivateShield", 1f);
-
+			RpcFlipShield ();
 
             if (currentShield < 0) {
 				currentShield = 0;
 				dmg -= shieldBeforeHit;
 				currentHealth -= dmg;
-				healthUI.UpdateHealthBar (currentHealth / maxHealth);
+				//healthUI.UpdateHealthBar (currentHealth / maxHealth);
 
 			}
 
-			healthUI.UpdateShieldBar (currentShield / maxShield);
+			//healthUI.UpdateShieldBar (currentShield / maxShield);
 
 		} else {
 			currentHealth -= dmg;
 			if (currentHealth < 0)
 				currentHealth = 0;
 
-			healthUI.UpdateHealthBar (currentHealth / maxHealth);
+			//healthUI.UpdateHealthBar (currentHealth / maxHealth);
 		}
 
-		if (currentHealth <= 0 && !isDead) {
+		if (currentHealth <= 0) {
 			Death ();
 		}
 	}
 
 	void Death(){
 		
-		isDead = true;
 		CancelInvoke ();
-		Instantiate (deathExplosion, transform.position, transform.rotation);
-		this.gameObject.SetActive (false);
+		NetworkServer.Spawn ((GameObject)Instantiate (deathExplosion, transform.position, transform.rotation));
+		RpcHideOnDeath ();
 
 		//Debug.Log("WE ARE AT 0 HEALTH");
 
@@ -104,4 +99,22 @@ public class PlayerHealth : MonoBehaviour {
 		return currentShield;
 	}
 
+	void OnChangeHealth(float health){
+		healthUI.UpdateHealthBar (health / maxHealth);
+	}
+
+	void OnChangeShield(float shield){
+		healthUI.UpdateShieldBar (shield / maxShield);
+	}
+
+	[ClientRpc]
+	void RpcHideOnDeath(){
+		this.gameObject.SetActive (false);
+	}
+
+	[ClientRpc]
+	void RpcFlipShield(){
+		shield.SetActive (true);
+		Invoke("DeactivateShield", 1f);
+	}
 }

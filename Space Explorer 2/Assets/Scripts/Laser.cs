@@ -46,11 +46,11 @@ public class Laser : MonoBehaviour {
 
 			if (hit.collider.gameObject.CompareTag ("Player")) {
 				//PlayerHealth player = hit.collider.gameObject.GetComponent<PlayerHealth> ();
-				PlayerHealth player = hit.collider.gameObject.GetComponent<PlayerHealth> ();
-				player.TakeDamage (damage);
-				if (player.getShield() <= 0) {
-					SpawnExplosion(hit.point, hit.transform);
-				}
+				//PlayerHealth player = hit.collider.gameObject.GetComponent<PlayerHealth> ();
+				//player.TakeDamage (damage);
+				//if (player.getShield() <= 0) {
+				//	SpawnExplosion(hit.point, hit.transform);
+				//}
 			}
 
 			if (hit.collider.gameObject.CompareTag ("Enemy")) {
@@ -66,6 +66,7 @@ public class Laser : MonoBehaviour {
 		return transform.position + (transform.forward * maxDistance);
 
     }
+
 
     void SpawnExplosion(Vector3 hitPosition,Transform target)
     {
@@ -83,8 +84,7 @@ public class Laser : MonoBehaviour {
     //poziva overloudan samo kaj ovaj radi za Playera
     public void FireLaser()
     {
-        FireLaser(CastRay());
-
+		FireLaser(CastRay());
     }
 
     //overloudan tako da radi i za Enemy
@@ -106,6 +106,10 @@ public class Laser : MonoBehaviour {
             Invoke("TurnOffLaser", laserOffTime);
             Invoke("CanFire", fireDelay);
     }
+
+	public void FireLaserEffectsOnly(){
+
+	}
 
     void TurnOffLaser()
     {

@@ -1,18 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class AsteroidManager : MonoBehaviour {
+public class AsteroidManager : NetworkBehaviour {
     [SerializeField]
     int numberOfAsteroidsOnAnAxis = 5;
     [SerializeField]
     int gridSpacing = 50;
 
     [SerializeField]
-    Asteroid asteroid;
+	GameObject asteroid;
 
     void Start()
     {
+		if (!isServer)
+			return;
         PlaceAsteroids();
     }
 
@@ -34,13 +37,21 @@ public class AsteroidManager : MonoBehaviour {
 
     void InstantiateAsteroid(int x, int y, int z)
     {
-        Instantiate(  
+        /*Instantiate(  
                      asteroid, 
                      new Vector3(transform.position.x+(x* gridSpacing) + AsteroidOffset(),
                      transform.position.y + (y * gridSpacing) + AsteroidOffset(), 
                      transform.position.z + (z * gridSpacing)+ AsteroidOffset()), 
                      Quaternion.identity, 
-                     transform);
+                     transform);*/
+
+		NetworkServer.Spawn ( (GameObject) Instantiate (
+			asteroid, 
+			new Vector3 (transform.position.x + (x * gridSpacing) + AsteroidOffset (),
+				transform.position.y + (y * gridSpacing) + AsteroidOffset (), 
+				transform.position.z + (z * gridSpacing) + AsteroidOffset ()), 
+			Quaternion.identity, 
+			transform));
     }
 
     float AsteroidOffset()

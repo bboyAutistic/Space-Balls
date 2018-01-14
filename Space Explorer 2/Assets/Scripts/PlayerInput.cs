@@ -50,7 +50,7 @@ public class PlayerInput : MonoBehaviour {
 
 		//update lock-on UI
 		if (target != null) {
-			Debug.Log (lockTimer);
+			//Debug.Log (lockTimer);
 			targetLockUI.gameObject.SetActive (true);
 			UpdateTargetLockUI ();
 		} else {

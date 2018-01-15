@@ -23,8 +23,11 @@ public class PlayerHealthMP : NetworkBehaviour {
 
 	float shieldBeforeHit;
 
+	Vector3 startPosition;
+
 	void Start () {
 		if (!isServer) {
+			startPosition = transform.position;
 			return;
 		}
 		RpcFlipShield ();
@@ -88,6 +91,8 @@ public class PlayerHealthMP : NetworkBehaviour {
 		NetworkServer.Spawn ((GameObject)Instantiate (deathExplosion, transform.position, transform.rotation));
 		RpcHideOnDeath ();
 
+		Invoke ("Respawn", 5f);
+
 		//Debug.Log("WE ARE AT 0 HEALTH");
 
 	}
@@ -118,5 +123,28 @@ public class PlayerHealthMP : NetworkBehaviour {
 	void RpcFlipShield(){
 		shield.SetActive (true);
 		Invoke("DeactivateShield", 1f);
+	}
+
+	void Respawn(){
+		currentHealth = maxHealth;
+		currentShield = maxShield;
+		InvokeRepeating ("RegenerateShield", shieldRegenTime, shieldRegenTime);
+		RpcResetPosition ();
+		RpcShowOnRespawn ();
+		RpcFlipShield ();
+	}
+
+	[ClientRpc]
+	void RpcResetPosition(){
+		if (isLocalPlayer) {
+			transform.position = startPosition;
+		}
+	}
+
+	[ClientRpc]
+	void RpcShowOnRespawn(){
+		if (isLocalPlayer) {
+			this.gameObject.SetActive (true);
+		}
 	}
 }

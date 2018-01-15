@@ -16,7 +16,7 @@ public class Missile : MonoBehaviour {
 
 	void Awake () {
 		rb = GetComponent<Rigidbody> ();
-		target = GetComponentInParent<PlayerInputMP> ().getTarget ();
+		target = GetComponentInParent<PlayerInput> ().getTarget ();
 		transform.SetParent(null);
 	}
 
@@ -49,7 +49,7 @@ public class Missile : MonoBehaviour {
 		Instantiate (explosion, transform.position, transform.rotation);
 
 		if (other.gameObject.CompareTag ("Player")) {
-			other.gameObject.GetComponent<PlayerHealthMP> ().TakeDamage (damage);
+			other.gameObject.GetComponent<PlayerHealth> ().TakeDamage (damage);
 		} else if (other.gameObject.CompareTag ("Enemy")) {
 			other.gameObject.GetComponent<EnemyHealth> ().TakeDamage (damage);
 		}

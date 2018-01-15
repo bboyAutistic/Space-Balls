@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class Asteroid : MonoBehaviour {
     [SerializeField]
-    float minScale = 32f;
+    float minScale = 5f;
     [SerializeField]
-    float maxScale = 45f;
+    float maxScale = 15f;
 
     [SerializeField]
     float rotationoffset = 50f;
 
-    
+
+
 
     Transform myT;
 
@@ -29,6 +30,8 @@ public class Asteroid : MonoBehaviour {
         scale.x = Random.Range(minScale, maxScale);
         scale.y = Random.Range(minScale, maxScale);
         scale.z = Random.Range(minScale, maxScale);
+
+        
 
         myT.localScale = scale;
 

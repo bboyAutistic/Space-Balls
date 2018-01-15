@@ -8,6 +8,7 @@ public class Spawner : MonoBehaviour {
     GameObject enemyPrefab;
     [SerializeField]
     float spawnTimer = 5f;
+    float repeatTimer = 20f;
 
     void Start()
     {
@@ -22,7 +23,8 @@ public class Spawner : MonoBehaviour {
 
     void StartSpawning()
     {
-        Invoke("SpawnEnemy", spawnTimer);
+        //Invoke("SpawnEnemy", spawnTimer);
+        InvokeRepeating("SpawnEnemy", spawnTimer, repeatTimer);
     }
     void StopSpawning()
     {

@@ -9,7 +9,7 @@ public class AsteroidManager : MonoBehaviour {
     int gridSpacing = 50;
 
     [SerializeField]
-    Asteroid asteroid;
+    GameObject asteroid;
 
     void Start()
     {

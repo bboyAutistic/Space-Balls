@@ -30,6 +30,9 @@ public class PlayerInput : MonoBehaviour {
 	}
 
 	void Update () {
+
+        if (Time.timeScale == 0) { return; }
+
 		//reload raketa i lock-on
 		missileReloadTimer += Time.deltaTime;
 		if (lockTimer > lockOnTime)

@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class Missile : MonoBehaviour {
+public class MissileMP : NetworkBehaviour {
 
 	public float moveSpeed = 10f;
 	public float turnSpeed = 1f;
@@ -29,7 +30,7 @@ public class Missile : MonoBehaviour {
 		timer += Time.deltaTime;
 
 		if (timer > timeOfFlight) {
-			Instantiate (explosion, transform.position, transform.rotation);
+			NetworkServer.Spawn (Instantiate (explosion, transform.position, transform.rotation));
 			Destroy (this.gameObject);
 		}
 	}
@@ -46,7 +47,7 @@ public class Missile : MonoBehaviour {
 
 	void OnCollisionEnter(Collision other){
 
-		Instantiate (explosion, transform.position, transform.rotation);
+		NetworkServer.Spawn (Instantiate (explosion, transform.position, transform.rotation));
 
 		if (other.gameObject.CompareTag ("Player")) {
 			other.gameObject.GetComponent<PlayerHealthMP> ().TakeDamage (damage);

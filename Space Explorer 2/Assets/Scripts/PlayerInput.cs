@@ -64,7 +64,7 @@ public class PlayerInput : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.Mouse1) && target != null && missileReloadTimer > missileReloadTime && lockOn) {
 			missileReloadTimer = 0f;
 			Instantiate (missile, transform.position - transform.up, transform.rotation, transform);
-		} else if (Input.GetKeyDown (KeyCode.Mouse1) && missileReloadTimer > missileReloadTime) {
+		} else if (Input.GetKeyDown (KeyCode.Mouse1) && target == null && missileReloadTimer > missileReloadTime) {
 			missileReloadTimer = 0f;
 			Instantiate (missile, transform.position - transform.up, transform.rotation, transform);
 		}

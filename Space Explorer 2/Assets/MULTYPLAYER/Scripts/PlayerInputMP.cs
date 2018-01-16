@@ -76,7 +76,7 @@ public class PlayerInputMP : NetworkBehaviour {
 		if (Input.GetKeyDown (KeyCode.Mouse1) && target != null && missileReloadTimer > missileReloadTime && lockOn) {
 			missileReloadTimer = 0f;
 			CmdFireMissile ();
-		} else if (Input.GetKeyDown (KeyCode.Mouse1) && missileReloadTimer > missileReloadTime) {
+		} else if (Input.GetKeyDown (KeyCode.Mouse1) && target == null && missileReloadTimer > missileReloadTime) {
 			missileReloadTimer = 0f;
 			CmdFireMissile ();
 		}

@@ -47,8 +47,8 @@ public class PauseMenu : MonoBehaviour {
         Cursor.lockState = CursorLockMode.None;
 
         pauseMenuUI.SetActive(true);
-		GameObject asdf = GameObject.Find ("NetworkManager");
-		if(asdf == null)
+		GameObject asdf = GameObject.Find ("NOPE");
+		if(asdf != null)
 			Time.timeScale = 0f;
         gameIsPaused = true;
         

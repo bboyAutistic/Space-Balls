@@ -11,6 +11,8 @@ public class PlayerHealth : MonoBehaviour {
 	public GameObject deathExplosion;
 
 	GameObject shield;
+	[SerializeField]
+	GameObject gameOverScreen;
 
 	float currentHealth;
 	float currentShield;
@@ -91,6 +93,8 @@ public class PlayerHealth : MonoBehaviour {
 		Instantiate (deathExplosion, transform.position, transform.rotation);
 		this.gameObject.SetActive (false);
 
+		Invoke ("GameOver", 2f);
+
 		//Debug.Log("WE ARE AT 0 HEALTH");
 
 	}
@@ -104,4 +108,9 @@ public class PlayerHealth : MonoBehaviour {
 		return currentShield;
 	}
 
+	void GameOver (){
+		gameOverScreen.SetActive (true);
+		Cursor.visible = true;
+		Cursor.lockState = CursorLockMode.None;
+	}
 }

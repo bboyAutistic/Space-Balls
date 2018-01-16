@@ -13,20 +13,26 @@ public class Missile : MonoBehaviour {
 	Rigidbody rb;
 	float timer;
 	GameObject target;
+	CapsuleCollider kolajder;
 
 	void Awake () {
 		rb = GetComponent<Rigidbody> ();
 		target = GetComponentInParent<PlayerInput> ().getTarget ();
 		transform.SetParent(null);
+		kolajder = GetComponent<CapsuleCollider> ();
 	}
 
 	void Start(){
 		timer = 0f;
+		kolajder.enabled = false;
 	}
 
 	void Update(){
 
 		timer += Time.deltaTime;
+
+		if (timer > 1 && !kolajder.enabled)
+			kolajder.enabled = true;
 
 		if (timer > timeOfFlight) {
 			Instantiate (explosion, transform.position, transform.rotation);

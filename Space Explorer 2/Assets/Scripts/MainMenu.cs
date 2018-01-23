@@ -10,6 +10,8 @@ public class MainMenu : MonoBehaviour {
     public AudioMixer audioMixer;
 
 	public NetworkManagerHUD multiplayerHUD;
+
+    
     
 	public void PlayGame()
     {
@@ -33,4 +35,11 @@ public class MainMenu : MonoBehaviour {
     {
         audioMixer.SetFloat("musicVolume", volume);
     }
+
+    public void SetNomberOfEnemis(int br)
+    {
+
+        NumberOfSpawners.numberOfEnemis = br;
+    }
+    
 }

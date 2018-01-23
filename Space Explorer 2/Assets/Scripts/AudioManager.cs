@@ -4,13 +4,15 @@ using UnityEngine;
 using UnityEngine.Audio;
 using System;
 
-public class AudioManager : MonoBehaviour {
+public class AudioManager : MonoBehaviour
+{
 
     public Sound[] sounds;
 
     public static AudioManager instance;
 
-	void Awake () {
+    void Awake()
+    {
         DontDestroyOnLoad(gameObject);
         if (instance == null)
             instance = this;
@@ -20,32 +22,40 @@ public class AudioManager : MonoBehaviour {
             return;
         }
 
-		foreach(Sound s in sounds)
+        foreach (Sound s in sounds)
         {
-            s.source=gameObject.AddComponent<AudioSource>();
+            s.source = gameObject.AddComponent<AudioSource>();
             s.source.clip = s.clip;
             s.source.volume = s.volume;
             s.source.pitch = s.pitch;
             s.source.loop = s.loop;
             s.source.outputAudioMixerGroup = s.outputMixer;
-           
+
         }
-	}
+    }
 
     void Start()
     {
-        Play("MainMusic");
+        // Play("sound1");
     }
-	
-	
-	public void Play (string nameWeSeek)
+
+
+    public void Play(string nameWeSeek)
     {
-        Sound s =Array.Find(sounds, sound => sound.nameOfSound == nameWeSeek);
+        Sound s = Array.Find(sounds, sound => sound.nameOfSound == nameWeSeek);
         if (s == null)
         {
             Debug.Log("NO SOUND FOUND!!!");
             return;
         }
+
+        foreach (Sound soundToStop in sounds)
+        {
+           soundToStop.source.Stop();
+        }
         s.source.Play();
-	}
+
+
+
+    }
 }
